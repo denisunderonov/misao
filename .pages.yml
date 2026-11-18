@@ -1,0 +1,171 @@
+media:
+  input: public/files
+  output: /files
+  extensions: [pdf]
+  rename: safe
+
+content:
+  - name: site
+    label: Настройки сайта
+    type: file
+    path: content/site.json
+    format: json
+    operations:
+      delete: false
+    fields:
+      - { name: title, label: Название, type: string, required: true }
+      - { name: shortTitle, label: Краткое название, type: string, required: true }
+      - { name: description, label: Описание на главной, type: text, required: true }
+      - { name: academicYear, label: Учебный год, type: string, required: true }
+      - { name: githubUrl, label: GitHub для ссылки в футере, type: string, required: true }
+      - { name: adminUrl, label: Ссылка на панель редактирования, type: string }
+      - { name: demo, label: Пометка демонстрационных материалов, type: boolean }
+
+  - name: subjects
+    label: Дисциплины и разделы
+    type: file
+    path: content/subjects.json
+    format: json
+    operations:
+      delete: false
+    fields:
+      - name: subjects
+        label: Дисциплины
+        type: object
+        list: true
+        fields:
+          - name: id
+            label: Код дисциплины
+            type: string
+            required: true
+            pattern: '^[a-z0-9]+(-[a-z0-9]+)*$'
+            description: 'Например mathematics. Не меняйте код после публикации: он используется в ссылках и темах.'
+          - { name: title, label: Название, type: string, required: true }
+          - { name: description, label: Описание, type: text, required: true }
+          - name: icon
+            label: Значок
+            type: select
+            required: true
+            options:
+              values: [calculator, code, globe, database, braces, book]
+          - name: color
+            label: Цвет
+            type: select
+            required: true
+            options:
+              values: [blue, mint, violet, peach]
+          - name: sections
+            label: Разделы
+            type: object
+            list: true
+            fields:
+              - name: id
+                label: Код раздела
+                type: string
+                required: true
+                pattern: '^[a-z0-9]+(-[a-z0-9]+)*$'
+              - { name: title, label: Название раздела, type: string, required: true }
+              - { name: order, label: Порядок, type: number, required: true }
+
+  - name: topics
+    label: База знаний
+    type: collection
+    path: content/topics
+    format: yaml-frontmatter
+    filename: '{fields.subject}-{fields.slug}.md'
+    subfolders: false
+    view:
+      primary: title
+      fields: [title, subject, published]
+      sort: [order, title]
+      default:
+        sort: order
+        order: asc
+    fields:
+      - { name: title, label: Название темы, type: string, required: true }
+      - { name: summary, label: Краткое описание, type: text, required: true }
+      - name: subject
+        label: Код дисциплины
+        type: string
+        required: true
+        pattern: '^[a-z0-9]+(-[a-z0-9]+)*$'
+        description: 'Скопируйте код из «Дисциплины и разделы»: mathematics или informatics.'
+      - name: section
+        label: Код раздела
+        type: string
+        required: true
+        pattern: '^[a-z0-9]+(-[a-z0-9]+)*$'
+        description: 'Скопируйте код раздела выбранной дисциплины. В математике уже есть algebra.'
+      - name: slug
+        label: Код темы для ссылки
+        type: string
+        required: true
+        pattern: '^[a-z0-9]+(-[a-z0-9]+)*$'
+        description: 'Например linear-equations. Используйте латинские буквы, цифры и дефис. Сохраняйте код после публикации.'
+      - { name: order, label: Порядок в разделе, type: number, required: true }
+      - name: updatedAt
+        label: Дата обновления
+        type: date
+        required: true
+        options:
+          format: yyyy-MM-dd
+          time: false
+      - { name: published, label: Опубликовать тему, type: boolean }
+      - { name: body, label: Объяснение темы, type: rich-text, required: true }
+
+  - name: assignments
+    label: Домашние задания
+    type: collection
+    path: content/assignments
+    format: yaml-frontmatter
+    filename: '{fields.subject}-{fields.slug}.md'
+    subfolders: false
+    view:
+      primary: title
+      fields: [title, subject, published]
+      sort: [order, title]
+      default:
+        sort: order
+        order: asc
+    fields:
+      - { name: title, label: Название задания, type: string, required: true }
+      - { name: summary, label: Краткое описание карточки, type: text, required: true }
+      - name: subject
+        label: Код дисциплины
+        type: string
+        required: true
+        pattern: '^[a-z0-9]+(-[a-z0-9]+)*$'
+        description: 'Скопируйте код из «Дисциплины и разделы»: mathematics или informatics.'
+      - name: section
+        label: Код раздела
+        type: string
+        required: true
+        pattern: '^[a-z0-9]+(-[a-z0-9]+)*$'
+        description: 'Например algebra для математики. Код должен существовать в выбранной дисциплине.'
+      - name: slug
+        label: Код задания для ссылки
+        type: string
+        required: true
+        pattern: '^[a-z0-9]+(-[a-z0-9]+)*$'
+        description: 'Латинские буквы, цифры и дефис. Задание может иметь такой же код, как связанная тема в базе знаний.'
+      - { name: order, label: Порядок, type: number, required: true }
+      - name: updatedAt
+        label: Дата обновления
+        type: date
+        required: true
+        options:
+          format: yyyy-MM-dd
+          time: false
+      - name: pdf
+        label: PDF с домашним заданием
+        type: file
+        required: true
+        options:
+          extensions: [pdf]
+          rename: safe
+      - { name: published, label: Опубликовать задание, type: boolean }
+      - { name: body, label: Описание и дополнительная информация, type: rich-text, required: true }
+
+settings:
+  content:
+    merge: true

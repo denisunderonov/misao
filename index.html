@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#01001c" />
+    <script>
+      (() => {
+        let theme;
+        try {
+          const saved = localStorage.getItem("misao-theme");
+          if (saved === "light" || saved === "dark") theme = saved;
+        } catch {}
+        if (!theme) {
+          theme =
+            window.matchMedia &&
+            window.matchMedia("(prefers-color-scheme: light)").matches
+              ? "light"
+              : "dark";
+        }
+        document.documentElement.dataset.theme = theme;
+        document.documentElement.style.colorScheme = theme;
+        document.querySelector('meta[name="theme-color"]').content =
+          theme === "dark" ? "#01001c" : "#fafaff";
+      })();
+    </script>
+    <meta
+      name="description"
+      content="МИСАО — учебные материалы и домашние задания для студентов колледжа. Выберите дисциплину, изучите тему и скачайте задание."
+    />
+    <title>МИСАО — учебные материалы</title>
+    <link
+      rel="icon"
+      href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Crect width='40' height='40' rx='11' fill='%233c54cf'/%3E%3Cpath d='M10 27V13h4l6 8 6-8h4v14h-4v-8l-6 8-6-8v8z' fill='white'/%3E%3C/svg%3E"
+    />
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

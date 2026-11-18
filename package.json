@@ -1,0 +1,41 @@
+{
+  "name": "misao-course-materials",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "content": "node scripts/build-content.mjs",
+    "predev": "npm run content",
+    "dev": "vite --host 127.0.0.1",
+    "prebuild": "npm run content",
+    "build": "tsc -b && vite build",
+    "preview": "vite preview --host 127.0.0.1",
+    "test": "vitest run",
+    "test:e2e": "playwright test"
+  },
+  "dependencies": {
+    "gray-matter": "^4.0.3",
+    "lucide-react": "^0.468.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "react-markdown": "^10.1.0",
+    "react-router-dom": "^7.1.0",
+    "remark-gfm": "^4.0.0",
+    "yaml": "^2.7.0",
+    "zod": "^4.6.7"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.51.0",
+    "@testing-library/jest-dom": "^6.6.0",
+    "@testing-library/react": "^16.1.0",
+    "@testing-library/user-event": "^14.5.0",
+    "@types/node": "^24.0.0",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "@vitejs/plugin-react": "^6.3.0",
+    "jsdom": "^26.0.0",
+    "typescript": "~5.7.3",
+    "vite": "^8.3.8",
+    "vitest": "^5.1.1"
+  }
+}
