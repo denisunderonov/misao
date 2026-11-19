@@ -7,7 +7,6 @@ type Field = { name: string; type: string; list?: boolean; fields?: Field[]; opt
 type Entry = { name: string; type: string; path: string; format: string; fields: Field[] };
 
 const config = parse(readFileSync(fileURLToPath(new URL('../.pages.yml', import.meta.url)), 'utf8')) as {
-  media: { input: string; output: string; extensions: string[] };
   content: Entry[];
 };
 
@@ -21,7 +20,8 @@ describe('Pages CMS редактирует тот же контент, кото�
     expect(subjects).toMatchObject({ type: 'file', path: 'content/subjects.json', format: 'json' });
     const list = subjects.fields.find((field) => field.name === 'subjects')!;
     expect(list).toMatchObject({ type: 'object', list: true });
-    expect(list.fields?.map((field) => field.name)).toEqual(expect.arrayContaining(['id', 'title', 'description', 'icon', 'color', 'sections']));
+    expect(list.fields?.map((field) => field.name)).toEqual(expect.arrayContaining(['id', 'title', 'icon', 'color', 'sections']));
+    expect(list.fields?.some((field) => field.name === 'description')).toBe(false);
     expect(list.fields?.find((field) => field.name === 'sections')?.fields?.map((field) => field.name)).toEqual(expect.arrayContaining(['id', 'title', 'order']));
   });
 
@@ -40,16 +40,14 @@ describe('Pages CMS редактирует тот же контент, кото�
     const assignments = config.content.find((item) => item.name === 'assignments')!;
     expect(assignments).toMatchObject({ type: 'collection', path: 'content/assignments', format: 'yaml-frontmatter' });
     expect(assignments.fields.map((field) => field.name)).toEqual(expect.arrayContaining([
-      'subject', 'section', 'slug', 'title', 'summary', 'order', 'pdf', 'updatedAt', 'published', 'body',
+      'subject', 'section', 'slug', 'title', 'summary', 'order', 'updatedAt', 'published', 'body',
     ]));
     expect(assignments.fields.find((field) => field.name === 'body')?.type).toBe('rich-text');
   });
 
-  it('загружает только PDF и формирует путь, который ожидает валидатор', () => {
-    expect(config.media).toMatchObject({ input: 'public/files', output: '/files', extensions: ['pdf'] });
-    const assignments = config.content.find((item) => item.name === 'assignments')!;
-    expect(assignments.fields.find((field) => field.name === 'pdf')).toMatchObject({
-      type: 'file', options: { extensions: ['pdf'] },
-    });
+  it('редактор текстовых материалов не предлагает загрузку файлов', () => {
+    expect(config).not.toHaveProperty('media');
+    const fields = config.content.flatMap((entry) => entry.fields);
+    expect(fields.some((field) => field.name === 'pdf' || field.type === 'file')).toBe(false);
   });
 });

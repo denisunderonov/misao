@@ -9,3 +9,11 @@ tmp/
 .env
 .env.*
 !.env.example
+.npmrc
+*.pem
+*.key
+*.p12
+*.pfx
+*.keystore
+*.log
+coverage/

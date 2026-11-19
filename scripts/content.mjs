@@ -1,6 +1,6 @@
 import fs from 'node:fs';
 import path from 'node:path';
-import matter from 'gray-matter';
+import { parseDocument } from 'yaml';
 import { z } from 'zod';
 
 const text = z.string().trim().min(1);
@@ -18,7 +18,7 @@ const siteSchema = z.object({
   githubUrl: z.string().url().refine((value) => /^https:\/\/github\.com\/[a-zA-Z0-9-]+\/?$/.test(value), 'Use a GitHub profile URL'),
 });
 const subjectSchema = z.object({
-  id: identifier, title: text, description: text,
+  id: identifier, title: text,
   icon: z.enum(['calculator', 'code', 'globe', 'database', 'braces', 'book']),
   color: z.enum(['blue', 'mint', 'violet', 'peach']),
   sections: z.array(z.object({ id: identifier, title: text, order })),
@@ -27,14 +27,13 @@ const topicSchema = z.object({
   subject: identifier, section: identifier, slug: identifier, title: text, summary: text,
   order, updatedAt: date, published: z.boolean().default(true), body: text,
 });
-const assignmentSchema = topicSchema.extend({ pdf: text });
 
 function assertUnique(values, label) {
   if (new Set(values).size !== values.length) throw new Error(`Duplicate ${label}`);
 }
 
 /** Validate published content. Unfinished drafts stay outside the public bundle. */
-export function validateContent(input, { publicDir } = {}) {
+export function validateContent(input) {
   const site = siteSchema.parse(input.site);
   const subjects = z.array(subjectSchema).parse(input.subjects);
   assertUnique(subjects.map((subject) => subject.id), 'subject id');
@@ -45,31 +44,13 @@ export function validateContent(input, { publicDir } = {}) {
   if (!Array.isArray(input.topics)) throw new Error('topics must be an array');
   const topics = input.topics.filter((topic) => topic.published !== false).map((topic) => topicSchema.parse(topic));
   if (input.assignments !== undefined && !Array.isArray(input.assignments)) throw new Error('assignments must be an array');
-  const assignments = (input.assignments ?? []).filter((assignment) => assignment.published !== false).map((assignment) => assignmentSchema.parse(assignment));
+  const assignments = (input.assignments ?? []).filter((assignment) => assignment.published !== false).map((assignment) => topicSchema.parse(assignment));
   assertUnique(topics.map((topic) => `${topic.subject}/${topic.slug}`), 'topic slug');
   assertUnique(assignments.map((assignment) => `${assignment.subject}/${assignment.slug}`), 'assignment slug');
   for (const topic of [...topics, ...assignments]) {
     const subject = subjects.find((item) => item.id === topic.subject);
     if (!subject) throw new Error(`Unknown subject: ${topic.subject}`);
     if (!subject.sections.some((section) => section.id === topic.section)) throw new Error(`Unknown section: ${topic.section}`);
-  }
-  for (const topic of assignments) {
-    // Only repository-owned PDF files: no external URLs, traversal, query or encoded path segments.
-    if (!/^\/files\/[a-zA-Z0-9_./-]+\.pdf$/.test(topic.pdf) || topic.pdf.split('/').some((segment) => segment === '..' || segment === '.')) {
-      throw new Error(`Unsafe PDF path: ${topic.pdf}`);
-    }
-    if (publicDir) {
-      const root = fs.realpathSync(publicDir);
-      const file = path.resolve(root, `.${topic.pdf}`);
-      if (!fs.existsSync(file)) throw new Error(`Missing PDF: ${topic.pdf}`);
-      const realFile = fs.realpathSync(file);
-      if (!realFile.startsWith(`${root}${path.sep}`)) throw new Error(`Unsafe PDF path: ${topic.pdf}`);
-      if (!fs.statSync(realFile).isFile()) throw new Error(`Invalid PDF file: ${topic.pdf}`);
-      const handle = fs.openSync(realFile, 'r');
-      const header = Buffer.alloc(5);
-      try { fs.readSync(handle, header, 0, 5, 0); } finally { fs.closeSync(handle); }
-      if (header.toString('ascii') !== '%PDF-') throw new Error(`Invalid PDF header: ${topic.pdf}`);
-    }
   }
   topics.sort((a, b) => a.order - b.order || a.slug.localeCompare(b.slug));
   assignments.sort((a, b) => a.order - b.order || a.slug.localeCompare(b.slug));
@@ -85,12 +66,21 @@ export function loadContent(rootDir) {
     // Git does not retain empty directories after the owner removes the last entry.
     if (!fs.existsSync(directory)) return [];
     return fs.readdirSync(directory).filter((name) => name.endsWith('.md')).sort().map((name) => {
-      const { data, content } = matter(fs.readFileSync(path.join(directory, name), 'utf8'));
-      if (data.updatedAt instanceof Date) data.updatedAt = data.updatedAt.toISOString().slice(0, 10);
-      return { ...data, body: content.trim() };
+      const source = fs.readFileSync(path.join(directory, name), 'utf8').replace(/^\uFEFF/, '').replace(/\r\n/g, '\n');
+      const lines = source.split('\n');
+      const closing = lines.indexOf('---', 1);
+      const label = `Invalid YAML frontmatter: ${collection}/${name}`;
+      // Only YAML metadata. Never dispatch an engine named by the document.
+      if (lines[0] !== '---' || closing < 0) throw new Error(label);
+      const document = parseDocument(lines.slice(1, closing).join('\n'), { schema: 'core', uniqueKeys: true });
+      if (document.errors.length || document.warnings.length) throw new Error(label);
+      let data;
+      try { data = document.toJS({ maxAliasCount: 50 }); } catch { throw new Error(label); }
+      if (!data || typeof data !== 'object' || Array.isArray(data)) throw new Error(label);
+      return { ...data, body: lines.slice(closing + 1).join('\n').trim() };
     });
   }
   const topics = loadCollection('topics');
   const assignments = loadCollection('assignments');
-  return validateContent({ site, subjects, topics, assignments }, { publicDir: path.join(rootDir, 'public') });
+  return validateContent({ site, subjects, topics, assignments });
 }

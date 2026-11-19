@@ -18,7 +18,6 @@ export interface Section {
 export interface Subject {
   id: string;
   title: string;
-  description: string;
   icon: string;
   color: string;
   sections: Section[];
@@ -36,9 +35,7 @@ export interface Topic {
   body: string;
 }
 
-export interface Assignment extends Topic {
-  pdf: string;
-}
+export type Assignment = Topic;
 
 export interface CourseContent {
   site: SiteSettings;

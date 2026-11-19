@@ -1,9 +1,3 @@
-media:
-  input: public/files
-  output: /files
-  extensions: [pdf]
-  rename: safe
-
 content:
   - name: site
     label: Настройки сайта
@@ -41,7 +35,6 @@ content:
             pattern: '^[a-z0-9]+(-[a-z0-9]+)*$'
             description: 'Например mathematics. Не меняйте код после публикации: он используется в ссылках и темах.'
           - { name: title, label: Название, type: string, required: true }
-          - { name: description, label: Описание, type: text, required: true }
           - name: icon
             label: Значок
             type: select
@@ -156,15 +149,8 @@ content:
         options:
           format: yyyy-MM-dd
           time: false
-      - name: pdf
-        label: PDF с домашним заданием
-        type: file
-        required: true
-        options:
-          extensions: [pdf]
-          rename: safe
       - { name: published, label: Опубликовать задание, type: boolean }
-      - { name: body, label: Описание и дополнительная информация, type: rich-text, required: true }
+      - { name: body, label: Условия задания и дополнительная информация, type: rich-text, required: true }
 
 settings:
   content:

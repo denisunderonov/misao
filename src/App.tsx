@@ -90,18 +90,84 @@ function SiteHeader() {
   const { pathname } = useLocation();
   const [isMobile, setIsMobile] = useState(() => window.innerWidth <= 760);
   const [menuOpen, setMenuOpen] = useState(false);
-  const headerRef = useRef<HTMLElement>(null);
   const menuRef = useRef<HTMLElement>(null);
   const menuButtonRef = useRef<HTMLButtonElement>(null);
+  const lastFocusedControl = useRef<HTMLElement | null>(null);
+  const focusAfterResize = useRef<{
+    target: "menu-button" | "navigation";
+    previous: HTMLElement;
+  } | null>(null);
+
+  function closeMenu(restoreFocus = false) {
+    if (
+      restoreFocus &&
+      isMobile &&
+      menuRef.current?.contains(document.activeElement)
+    ) {
+      menuButtonRef.current?.focus();
+    }
+    setMenuOpen(false);
+  }
 
   useEffect(() => {
+    let wasMobile = window.innerWidth <= 760;
+
+    function trackFocus(event: FocusEvent) {
+      const target = event.target;
+      if (!(target instanceof HTMLElement)) return;
+      if (
+        menuRef.current?.contains(target) ||
+        target === menuButtonRef.current
+      ) {
+        lastFocusedControl.current = target;
+      } else if (
+        target !== document.body &&
+        target !== document.documentElement
+      ) {
+        lastFocusedControl.current = null;
+      }
+    }
+
+    function trackPointer(event: PointerEvent) {
+      if (
+        event.target instanceof Node &&
+        !menuRef.current?.contains(event.target) &&
+        !menuButtonRef.current?.contains(event.target)
+      ) {
+        lastFocusedControl.current = null;
+      }
+    }
+
     function handleResize() {
       const mobile = window.innerWidth <= 760;
+      const previous = lastFocusedControl.current;
+      const active = document.activeElement;
+      const focusWasReset =
+        active === document.body ||
+        active === document.documentElement ||
+        active === previous;
+
+      // CSS can blur a hidden control before the resize event reaches React.
+      if (mobile !== wasMobile && previous && focusWasReset) {
+        if (mobile && menuRef.current?.contains(previous)) {
+          focusAfterResize.current = { target: "menu-button", previous };
+        } else if (!mobile && previous === menuButtonRef.current) {
+          focusAfterResize.current = { target: "navigation", previous };
+        }
+      }
+      wasMobile = mobile;
       setIsMobile(mobile);
       if (!mobile) setMenuOpen(false);
     }
+
+    document.addEventListener("focusin", trackFocus);
+    document.addEventListener("pointerdown", trackPointer);
     window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
+    return () => {
+      document.removeEventListener("focusin", trackFocus);
+      document.removeEventListener("pointerdown", trackPointer);
+      window.removeEventListener("resize", handleResize);
+    };
   }, []);
 
   useEffect(() => {
@@ -109,7 +175,19 @@ function SiteHeader() {
   }, [pathname]);
 
   useEffect(() => {
-    if (!isMobile && document.activeElement === menuButtonRef.current) {
+    const pending = focusAfterResize.current;
+    focusAfterResize.current = null;
+    if (!pending) return;
+    const active = document.activeElement;
+    if (
+      active !== document.body &&
+      active !== document.documentElement &&
+      active !== pending.previous
+    )
+      return;
+    if (isMobile && pending.target === "menu-button") {
+      menuButtonRef.current?.focus();
+    } else if (!isMobile && pending.target === "navigation") {
       menuRef.current?.querySelector<HTMLAnchorElement>("a")?.focus();
     }
   }, [isMobile]);
@@ -127,9 +205,10 @@ function SiteHeader() {
     function handleOutsideClick(event: PointerEvent) {
       if (
         event.target instanceof Node &&
-        !headerRef.current?.contains(event.target)
+        !menuRef.current?.contains(event.target) &&
+        !menuButtonRef.current?.contains(event.target)
       ) {
-        setMenuOpen(false);
+        closeMenu(true);
       }
     }
     document.addEventListener("keydown", handleKeyDown);
@@ -141,7 +220,7 @@ function SiteHeader() {
   }, [menuOpen, isMobile]);
 
   return (
-    <header className="site-header" ref={headerRef}>
+    <header className="site-header">
       <div className="container header-inner">
         <Link
           to="/"
@@ -158,7 +237,7 @@ function SiteHeader() {
           aria-label={menuOpen ? "Закрыть меню" : "Открыть меню"}
           aria-expanded={menuOpen}
           aria-controls="primary-navigation"
-          onClick={() => setMenuOpen((open) => !open)}
+          onClick={() => (menuOpen ? closeMenu(true) : setMenuOpen(true))}
         >
           <svg
             width="26"
@@ -189,7 +268,7 @@ function SiteHeader() {
             to="/"
             end
             className="header-nav-link"
-            onClick={() => setMenuOpen(false)}
+            onClick={() => closeMenu(true)}
           >
             Дисциплины
           </NavLink>
@@ -229,10 +308,7 @@ function HomePage() {
             to={`/subjects/${encodeURIComponent(subject.id)}`}
             className={`course-card accent-${subject.color}`}
           >
-            <div>
-              <h2>{subject.title}</h2>
-              <p>{subject.description}</p>
-            </div>
+            <h2>{subject.title}</h2>
             <span className="course-arrow" aria-hidden="true">
               ↗
             </span>
@@ -344,7 +420,7 @@ function MarkdownBody({ body }: { body: string }) {
         components={{
           a: ({ href, children, ...props }) => (
             <a
-              href={href?.startsWith("/files/") ? assetUrl(href) : href}
+              href={href}
               {...(href?.startsWith("https://") || href?.startsWith("http://")
                 ? { target: "_blank", rel: "noreferrer" }
                 : {})}
@@ -412,19 +488,6 @@ function HomeworkPage() {
       <article className="topic-article">
         <h1 className="page-title topic-title">{assignment.title}</h1>
         <MarkdownBody body={assignment.body} />
-        <section
-          className="homework-card"
-          aria-labelledby="homework-download-heading"
-        >
-          <h2 id="homework-download-heading">Домашнее задание</h2>
-          <a
-            className="button download-button"
-            href={assetUrl(assignment.pdf)}
-            download
-          >
-            Скачать задание
-          </a>
-        </section>
       </article>
     </div>
   );

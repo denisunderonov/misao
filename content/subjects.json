@@ -3,7 +3,6 @@
     {
       "id": "mathematics",
       "title": "Математика",
-      "description": "Основы алгебры и решение уравнений.",
       "icon": "calculator",
       "color": "blue",
       "sections": [{ "id": "algebra", "title": "Основы алгебры", "order": 1 }]
@@ -11,7 +10,6 @@
     {
       "id": "informatics",
       "title": "Информатика",
-      "description": "Материалы готовятся.",
       "icon": "code",
       "color": "mint",
       "sections": []
