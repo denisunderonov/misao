@@ -21,13 +21,13 @@ function fixture() {
     }],
     topics: [{
       subject: 'mathematics', section: 'algebra', slug: 'linear-equations',
-      title: 'Линейные уравнения', summary: 'Разбираем уравнения.', order: 1,
+      title: 'Линейные уравнения', order: 1,
       updatedAt: '2026-11-18',
       published: true, body: '# Линейные уравнения\n\nРешим уравнение 2x = 6.',
     }],
     assignments: [{
       subject: 'mathematics', section: 'algebra', slug: 'linear-equations',
-      title: 'Практика линейных уравнений', summary: 'Самостоятельная работа.', order: 1,
+      title: 'Практика линейных уравнений', order: 1,
       updatedAt: '2026-11-18',
       published: true, body: '1. Решите 2x = 6.\n2. Проверьте ответ подстановкой.',
     }],
@@ -43,9 +43,18 @@ describe('Проверка учебных материалов перед пуб
     expect(result.topics).toHaveLength(1);
     expect(result.topics[0].body).toContain('2x = 6');
     expect(result.topics[0]).not.toHaveProperty('pdf');
+    expect(result.topics[0]).not.toHaveProperty('summary');
     expect(result.assignments).toHaveLength(1);
     expect(result.assignments[0].body).toBe(input.assignments[0].body);
     expect(result.assignments[0]).not.toHaveProperty('pdf');
+    expect(result.assignments[0]).not.toHaveProperty('summary');
+  });
+
+  it.each(['topics', 'assignments'] as const)('не переносит устаревшую подпись в публичные данные %s', async (collection) => {
+    const input = fixture();
+    Object.assign(input[collection][0], { summary: 'Устаревшая подпись' });
+    const result = await validateContent(input);
+    expect(result[collection][0]).not.toHaveProperty('summary');
   });
 
   it('принимает одинаковый slug теории и ДЗ: у них разные адреса', async () => {
@@ -204,6 +213,10 @@ describe('Настоящий контент репозитория', () => {
     expect(Array.isArray(result.subjects)).toBe(true);
     expect(Array.isArray(result.topics)).toBe(true);
     expect(Array.isArray(result.assignments)).toBe(true);
+    for (const material of [...result.topics, ...result.assignments]) {
+      expect(material).not.toHaveProperty('summary');
+      expect(material.body).not.toMatch(/^#{1,6}\s+Источники для повторения\s*$/m);
+    }
     const validatedAgain = await validateContent(result);
     expect(validatedAgain).toEqual(result);
   });

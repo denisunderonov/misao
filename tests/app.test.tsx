@@ -79,6 +79,19 @@ describe('Чтение материалов и состояния интерфе
     expect(homework.getByRole('link', { name: /Практика уравнений/ })).toHaveAttribute('href', '/subjects/math/homework/equations');
   });
 
+  it.each([
+    ['База знаний', 'Уравнения', 'Проверяем Markdown'],
+    ['Домашние задания', 'Практика уравнений', 'Задание на дом'],
+  ])('карточки %s показывают только название и стрелку даже при старой подписи', (region, title, summary) => {
+    render(<MemoryRouter initialEntries={['/subjects/math']}><App /></MemoryRouter>);
+    const list = screen.getByRole('region', { name: region });
+    const card = within(list).getByRole('link', { name: title, exact: true });
+    expect(card.textContent?.replace('↗', '').trim()).toBe(title);
+    expect(card.querySelector('p')).toBeNull();
+    expect(card.querySelector('.row-arrow')).toHaveAttribute('aria-hidden', 'true');
+    expect(within(list).queryByText(summary)).not.toBeInTheDocument();
+  });
+
   it('отображает текст отдельного домашнего задания со всеми условиями прямо на странице', () => {
     render(<MemoryRouter initialEntries={['/subjects/math/homework/equations']}><App /></MemoryRouter>);
     expect(screen.getByRole('heading', { name: 'Практика уравнений' })).toBeInTheDocument();

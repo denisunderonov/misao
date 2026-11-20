@@ -3,7 +3,6 @@ subject: mathematics
 section: algebra
 slug: inequalities
 title: 'Неравенства и числовые промежутки'
-summary: 'Учитывать знак, границы и область допустимых значений.'
 order: 6
 updatedAt: '2026-11-20'
 published: true
@@ -48,9 +47,3 @@ $$x\in(-\infty;1]\cup(3;+\infty).$$
 $|x-a|\le r$ при $r\ge0$ означает «расстояние до $a$ не больше $r$»: $a-r\le x\le a+r$. Например, $|x-3|\le2$ даёт $[1;5]$. Для $|x-3|>2$ нужны внешние лучи $(-\infty;1)\cup(5;+\infty)$. При отрицательной правой части сначала учитывайте неотрицательность модуля: $|x|<-1$ решений не имеет.
 
 **Самопроверка:** проверяйте по одной внутренней точке и каждую конечную границу ответа.
-
-## Источники для повторения
-
-- [Фоксфорд: линейные неравенства](https://foxford.ru/wiki/matematika/lineynye-neravenstva-s-odnim-neizvestnym)
-- [Фоксфорд: неравенства с модулем](https://foxford.ru/wiki/matematika/lineynye-neravenstva-s-modulem)
-- [Базовая школьная программа: состав необходимых знаний](https://edsoo.ru/wp-content/uploads/2025/07/2025_ooo_frp_matematika-5-9_baza.pdf)

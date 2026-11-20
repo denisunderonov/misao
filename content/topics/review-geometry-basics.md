@@ -3,7 +3,6 @@ subject: mathematics
 section: algebra
 slug: geometry-basics
 title: 'Геометрия: фигуры, подобие и прямоугольный треугольник'
-summary: 'Восстановить геометрическую основу для задач 10 класса.'
 order: 8
 updatedAt: '2026-11-20'
 published: true
@@ -64,9 +63,3 @@ $$\tan\alpha=\frac{\text{противолежащий катет}}{\text{при�
 На рисунке для угла при A: $\sin\alpha=\frac45$, $\cos\alpha=\frac35$, $\tan\alpha=\frac43$. При смене выбранного острого угла катеты меняются ролями. Полезная проверка: $\sin^2\alpha+\cos^2\alpha=1$.
 
 Для $30^\circ$ синус $\frac12$, косинус $\frac{\sqrt3}{2}$; для $45^\circ$ оба равны $\frac{\sqrt2}{2}$; для $60^\circ$ синус $\frac{\sqrt3}{2}$, косинус $\frac12$. Это база для дальнейшего изучения тригонометрии; сложные преобразования пока не нужны.
-
-## Источники для повторения
-
-- [Фоксфорд: Теорема Пифагора](https://foxford.ru/wiki/matematika/teorema-pifagora)
-- [Фоксфорд: Первый признак подобия треугольников](https://foxford.ru/wiki/matematika/pervy-priznak-podobiya-treugolnikov)
-- [Базовая школьная программа: состав необходимых знаний](https://edsoo.ru/wp-content/uploads/2025/07/2025_ooo_frp_matematika-5-9_baza.pdf)

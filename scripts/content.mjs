@@ -24,7 +24,7 @@ const subjectSchema = z.object({
   sections: z.array(z.object({ id: identifier, title: text, order })),
 });
 const topicSchema = z.object({
-  subject: identifier, section: identifier, slug: identifier, title: text, summary: text,
+  subject: identifier, section: identifier, slug: identifier, title: text,
   order, updatedAt: date, published: z.boolean().default(true), body: text,
 });
 

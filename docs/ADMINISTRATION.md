@@ -64,7 +64,6 @@ subject: mathematics
 section: algebra
 slug: quadratic-equations
 title: Квадратные уравнения
-summary: Краткое описание темы.
 order: 2
 updatedAt: '2026-11-18'
 published: true

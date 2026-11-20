@@ -28,7 +28,6 @@ export interface Topic {
   section: string;
   slug: string;
   title: string;
-  summary: string;
   order: number;
   updatedAt: string;
   published?: boolean;

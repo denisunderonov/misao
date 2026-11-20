@@ -3,7 +3,6 @@ subject: mathematics
 section: algebra
 slug: expressions-fractions
 title: 'Выражения, формулы и алгебраические дроби'
-summary: 'Раскрывать скобки, раскладывать на множители и сохранять ограничения.'
 order: 2
 updatedAt: '2026-11-20'
 published: true
@@ -52,9 +51,3 @@ $$\frac2x+\frac13=\frac6{3x}+\frac{x}{3x}=\frac{x+6}{3x}.$$
 Из $S=ab$ при $b\ne0$ можно выразить $a=\frac Sb$. Смысл тот же, что в числовом равенстве: делим обе части на $b$. Если площадь 48 м², а ширина 6 м, длина $48:6=8$ м. Не подставляйте сантиметры и метры в одну формулу без перевода.
 
 **Самопроверка:** называйте общий множитель и исходные запрещённые значения перед сокращением.
-
-## Источники для повторения
-
-- [Фоксфорд: сокращение алгебраических дробей](https://foxford.ru/wiki/matematika/algebraicheskaya-drob-sokrashcheniye-algebraicheskikh-drobey)
-- [Фоксфорд: Дробно-рациональные уравнения](https://foxford.ru/wiki/matematika/drobno-rational-uravnenia)
-- [Базовая школьная программа: состав необходимых знаний](https://edsoo.ru/wp-content/uploads/2025/07/2025_ooo_frp_matematika-5-9_baza.pdf)

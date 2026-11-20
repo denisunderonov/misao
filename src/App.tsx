@@ -366,7 +366,6 @@ function MaterialList({
         >
           <div>
             <h3>{material.title}</h3>
-            <p>{material.summary}</p>
           </div>
           <span className="row-arrow" aria-hidden="true">
             ↗

@@ -3,7 +3,6 @@ subject: mathematics
 section: algebra
 slug: review-7-9
 title: 'Повторение 7–9 класса'
-summary: '24 задания по восьми базовым темам с ответами для самопроверки.'
 order: 1
 updatedAt: '2026-11-20'
 published: true

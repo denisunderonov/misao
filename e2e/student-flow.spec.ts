@@ -96,7 +96,8 @@ test('база знаний содержит объяснение без ска�
   await expect(page.getByRole('heading', { name: 'База знаний', exact: true })).toBeVisible();
   await expect(page.getByRole('heading', { name: 'Домашние задания', exact: true })).toBeVisible();
   const knowledgeLink = page.getByRole('region', { name: 'База знаний' }).locator(`a[href="${topicRoute(topic)}"]`);
-  await expect(knowledgeLink).toContainText(topic.summary);
+  await expect(knowledgeLink).toHaveAccessibleName(topic.title);
+  await expect(knowledgeLink.locator('p')).toHaveCount(0);
   await knowledgeLink.click();
   await expect(page.locator('article > h1')).toHaveText(topic.title);
   await expect(page.locator('article .prose')).not.toBeEmpty();
@@ -115,20 +116,19 @@ test('сетки материалов переносят длинные назв
         card.querySelector('h3')!.textContent = index === 0
           ? 'ОченьДлинноеНазваниеТемы'.repeat(5)
           : `Материал ${index + 1}: дополнительная практика`;
-        card.querySelector('p')!.textContent = 'Разбираем примеры и проверяем полученные ответы. '.repeat(index + 1);
         return card;
       });
       element.replaceChildren(...cards);
     });
     await page.evaluate(() => document.fonts.ready);
+    await expect(list.locator('.material-card p')).toHaveCount(0);
     const cards = await list.locator('.material-card').evaluateAll((elements) => elements.map((element) => {
       const card = element.getBoundingClientRect();
       const title = element.querySelector('h3')!.getBoundingClientRect();
-      const summary = element.querySelector('p')!.getBoundingClientRect();
       const arrow = element.querySelector('.row-arrow')!.getBoundingClientRect();
       return { x: card.x, y: card.y, width: card.width, height: card.height,
-        inside: title.left >= card.left && title.right <= card.right + 1 && summary.right <= card.right + 1,
-        separated: title.bottom <= summary.top && summary.bottom <= arrow.top + 1 };
+        inside: title.left >= card.left && title.right <= card.right + 1 && title.bottom <= card.bottom + 1 && arrow.right <= card.right + 1,
+        separated: title.bottom <= arrow.top + 1 };
     }));
     expect(cards.every((card) => card.inside && card.separated)).toBe(true);
     const columns = page.viewportSize()!.width > 760 ? 2 : 1;
@@ -145,7 +145,8 @@ test('домашнее задание открывается отдельно и
   test.skip(!assignment, 'В репозитории нет опубликованных домашних заданий. Их интерфейс покрыт независимыми App fixtures.');
   await page.goto(`./${subjectRoute(assignment.subject)}`);
   const homeworkLink = page.getByRole('region', { name: 'Домашние задания' }).locator(`a[href="${homeworkRoute(assignment)}"]`);
-  await expect(homeworkLink).toContainText(assignment.summary);
+  await expect(homeworkLink).toHaveAccessibleName(assignment.title);
+  await expect(homeworkLink.locator('p')).toHaveCount(0);
   await homeworkLink.click();
   await expect(page.locator('article > h1')).toHaveText(assignment.title);
   await expect(page.locator('article .prose')).not.toBeEmpty();
