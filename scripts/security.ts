@@ -9,6 +9,7 @@ export function secureHtml(html: string): string {
     "default-src 'none'",
     ["script-src 'self'", ...hashes].join(' '),
     "style-src 'self'",
+    "style-src-attr 'unsafe-inline'",
     "img-src 'self' https: data:",
     "font-src 'self'",
     "connect-src 'none'",

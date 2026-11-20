@@ -5,7 +5,13 @@
       "title": "Математика",
       "icon": "calculator",
       "color": "blue",
-      "sections": [{ "id": "algebra", "title": "Основы алгебры", "order": 1 }]
+      "sections": [
+        {
+          "id": "algebra",
+          "title": "Повторение 7–9 классов",
+          "order": 1
+        }
+      ]
     },
     {
       "id": "informatics",

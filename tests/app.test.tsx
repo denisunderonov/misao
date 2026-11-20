@@ -17,7 +17,7 @@ vi.mock('../src/lib/content', () => ({
     topics: [{
       subject: 'math', section: 'algebra', slug: 'equations', title: 'Уравнения', summary: 'Проверяем Markdown', order: 1,
       updatedAt: '2026-11-18', published: true,
-      body: '## Пример\n\n**Важное правило**\n\n| x | 2x |\n| - | - |\n| 3 | 6 |\n\n<script>window.__unsafe = true</script>\n\n[Опасная ссылка](javascript:alert(1))',
+      body: '## Пример\n\n**Важное правило**\n\n| x | 2x |\n| - | - |\n| 3 | 6 |\n\n<script>window.__unsafe = true</script>\n\n[Опасная ссылка](javascript:alert(1))\n\n$\\frac{1}{2}$\n\n$$\nx^2+2x+1\n$$',
     }],
     assignments: [{
       subject: 'math', section: 'algebra', slug: 'equations', title: 'Практика уравнений', summary: 'Задание на дом', order: 1,
@@ -207,3 +207,10 @@ describe('Переключение оформления', () => {
     expect(screen.getByRole('heading', { name: 'Дисциплины' })).toBeInTheDocument();
   });
 });
+
+ it('отображает строчные и блочные формулы как KaTeX и MathML без ошибок', () => {
+  render(<MemoryRouter initialEntries={['/subjects/math/topics/equations']}><App /></MemoryRouter>);
+  expect(document.querySelectorAll('.katex').length).toBeGreaterThanOrEqual(2);
+  expect(document.querySelector('.katex-display math')).not.toBeNull();
+  expect(document.querySelector('.katex-error')).toBeNull();
+ });

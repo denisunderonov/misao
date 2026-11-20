@@ -8,5 +8,6 @@ export default defineConfig({
     apply: 'build',
     transformIndexHtml: { order: 'post', handler: secureHtml },
   }],
+  build: { assetsInlineLimit: 0 },
   base: process.env.VITE_BASE_PATH || '/',
 });

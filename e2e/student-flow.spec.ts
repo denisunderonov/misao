@@ -243,7 +243,8 @@ test('production CSP блокирует посторонний код, подк�
   await expect(page.locator('main h1')).toHaveText('Дисциплины');
   const csp = await page.locator('meta[http-equiv="Content-Security-Policy"]').getAttribute('content');
   expect(csp).toContain("script-src 'self' 'sha256-");
-  expect(csp).not.toMatch(/unsafe-(?:inline|eval)/);
+  expect(csp?.match(/script-src[^;]+/)?.[0]).not.toMatch(/unsafe-(?:inline|eval)/);
+  expect(csp).toContain("style-src-attr 'unsafe-inline'");
   expect(await page.locator('meta[name="referrer"]').getAttribute('content')).toBe('no-referrer');
   const result = await page.evaluate(async () => {
     const violations: string[] = [];

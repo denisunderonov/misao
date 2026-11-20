@@ -12,7 +12,8 @@ describe('Защита production HTML', () => {
     expect(html.indexOf('Content-Security-Policy')).toBeLessThan(html.indexOf('<script'));
     for (const directive of ["default-src 'none'", "script-src 'self'", "style-src 'self'", "object-src 'none'", "base-uri 'none'", "form-action 'none'", "connect-src 'none'"])
       expect(html).toContain(directive);
-    expect(html).not.toContain("'unsafe-inline'");
+    expect(html.match(/script-src[^;]+/)?.[0]).not.toContain("'unsafe-inline'");
+    expect(html).toContain("style-src-attr 'unsafe-inline'");
     expect(html).not.toContain("'unsafe-eval'");
   });
   it('разрешает точный SHA256 раннего скрипта темы, сохраняя сам скрипт', () => {
