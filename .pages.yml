@@ -9,7 +9,6 @@ content:
     fields:
       - { name: title, label: Название, type: string, required: true }
       - { name: shortTitle, label: Краткое название, type: string, required: true }
-      - { name: description, label: Описание на главной, type: text, required: true }
       - { name: academicYear, label: Учебный год, type: string, required: true }
       - { name: githubUrl, label: GitHub для ссылки в футере, type: string, required: true }
       - { name: adminUrl, label: Ссылка на панель редактирования, type: string }
@@ -35,6 +34,7 @@ content:
             pattern: '^[a-z0-9]+(-[a-z0-9]+)*$'
             description: 'Например mathematics. Не меняйте код после публикации: он используется в ссылках и темах.'
           - { name: title, label: Название, type: string, required: true }
+          - { name: isNew, label: Метка new, type: boolean }
           - name: icon
             label: Значок
             type: select
@@ -75,13 +75,14 @@ content:
         sort: order
         order: asc
     fields:
+      - { name: isNew, label: Метка new, type: boolean }
       - { name: title, label: Название темы, type: string, required: true }
       - name: subject
         label: Код дисциплины
         type: string
         required: true
         pattern: '^[a-z0-9]+(-[a-z0-9]+)*$'
-        description: 'Скопируйте код из «Дисциплины и разделы»: mathematics или informatics.'
+        description: 'Скопируйте код из «Дисциплины и разделы»: например mathematics или professional-it.'
       - name: section
         label: Код раздела
         type: string
@@ -120,13 +121,14 @@ content:
         sort: order
         order: asc
     fields:
+      - { name: isNew, label: Метка new, type: boolean }
       - { name: title, label: Название задания, type: string, required: true }
       - name: subject
         label: Код дисциплины
         type: string
         required: true
         pattern: '^[a-z0-9]+(-[a-z0-9]+)*$'
-        description: 'Скопируйте код из «Дисциплины и разделы»: mathematics или informatics.'
+        description: 'Скопируйте код из «Дисциплины и разделы»: например mathematics или professional-it.'
       - name: section
         label: Код раздела
         type: string

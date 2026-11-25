@@ -29,7 +29,7 @@ describe('Pages CMS редактирует тот же контент, кото�
     const topics = config.content.find((item) => item.name === 'topics')!;
     expect(topics).toMatchObject({ type: 'collection', path: 'content/topics', format: 'yaml-frontmatter' });
     expect(topics.fields.map((field) => field.name)).toEqual(expect.arrayContaining([
-      'subject', 'section', 'slug', 'title', 'order', 'updatedAt', 'published', 'body',
+      'subject', 'section', 'slug', 'title', 'isNew', 'order', 'updatedAt', 'published', 'body',
     ]));
     expect(topics.fields.some((field) => ['summary', 'description'].includes(field.name))).toBe(false);
     expect(topics.fields.find((field) => field.name === 'body')?.type).toBe('rich-text');
@@ -41,7 +41,7 @@ describe('Pages CMS редактирует тот же контент, кото�
     const assignments = config.content.find((item) => item.name === 'assignments')!;
     expect(assignments).toMatchObject({ type: 'collection', path: 'content/assignments', format: 'yaml-frontmatter' });
     expect(assignments.fields.map((field) => field.name)).toEqual(expect.arrayContaining([
-      'subject', 'section', 'slug', 'title', 'order', 'updatedAt', 'published', 'body',
+      'subject', 'section', 'slug', 'title', 'isNew', 'order', 'updatedAt', 'published', 'body',
     ]));
     expect(assignments.fields.some((field) => ['summary', 'description'].includes(field.name))).toBe(false);
     expect(assignments.fields.find((field) => field.name === 'body')?.type).toBe('rich-text');

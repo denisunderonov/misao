@@ -111,7 +111,6 @@ button, input { font: inherit; }
 .course-list, .material-list { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); min-width: 0; gap: 32px; }
 .course-card, .material-card { position: relative; display: block; min-width: 0; min-height: 234px; padding: 40px 48px 76px; border-radius: 32px; color: var(--card-text); background: var(--blue); transition: background .18s, transform .18s; }
 .course-card { min-height: 192px; padding: 32px 36px 76px; }
-.material-card > div { display: grid; min-width: 0; grid-template-columns: minmax(0, 1fr); gap: 16px; align-items: start; }
 .course-card h2, .material-card h3 { margin: 0; font-size: 32px; line-height: 1.25; letter-spacing: -.02em; text-transform: uppercase; }
 .course-arrow, .material-card .row-arrow { position: absolute; right: 32px; bottom: 24px; display: grid; place-items: center; width: 46px; height: 46px; border: 1px solid var(--card-outline); border-radius: 50%; font-family: system-ui, sans-serif; font-size: 28px; line-height: 1; }
 .course-card:hover, .material-card:hover { transform: translateY(-3px); background: var(--blue-hover); }
@@ -125,7 +124,7 @@ button, input { font: inherit; }
 .course-sections { display: grid; min-width: 0; gap: 64px; }
 .course-section { min-width: 0; }
 .course-section > h2, .section-title { margin-bottom: 28px; font-size: 32px; line-height: 1.3; font-weight: 600; }
-.material-card { min-height: 192px; padding: 32px 36px 76px; }
+.material-card { min-height: 216px; }
 .material-card h3 { font-size: 28px; }
 .empty-state { padding: 48px 0; text-align: center; }
 .empty-state p, .section-empty { margin: 0; font-size: 20px; line-height: 1.7; }
@@ -164,7 +163,7 @@ button, input { font: inherit; }
 @media (min-width: 1600px) {
   .container { width: min(1440px, 100%); padding-inline: 64px; }
   .header-inner { min-height: 120px; }
-  .material-card { min-height: 216px; }
+  .material-card { min-height: 248px; }
 }
 @media (max-width: 1024px) {
   .container { padding-inline: 32px; }
@@ -183,7 +182,7 @@ button, input { font: inherit; }
   .theme-toggle { grid-column: 2; grid-row: 1; width: 44px; height: 44px; padding: 9px; }
   .course-list, .material-list { grid-template-columns: minmax(0, 1fr); }
   .course-card { min-height: 176px; }
-  .material-card { min-height: 176px; }
+  .material-card { min-height: 260px; }
 }
 @media (max-width: 640px) {
   :root { font-size: 18px; }
@@ -222,3 +221,14 @@ button, input { font: inherit; }
 
 .prose .katex-display { max-width: 100%; overflow-x: auto; overflow-y: hidden; padding: 8px 2px; }
 .prose .katex { font-size: 1.1em; }
+
+/* A flag-controlled label, positioned above the card without covering its title. */
+.new-badge { position: absolute; top: -32px; right: 24px; display: grid; place-items: center; width: 64px; height: 64px; border: 2px solid var(--background); border-radius: 50%; background: #ffe1a6; color: #34234e; font: 700 18px/1 'NextArt', sans-serif; letter-spacing: .03em; box-shadow: 0 3px 8px #0002; }
+.prose .submission-notice { padding: 18px 22px; border-left: 4px solid #e4a8ff; border-radius: 0 12px 12px 0; color: #ecd0ff; background: #211439; }
+.prose .submission-notice strong { font-weight: 700; font-synthesis: weight; }
+html[data-theme='light'] .prose .submission-notice { color: #622a7d; background: #f0e3f8; border-color: #8645a6; }
+details.prose > summary { cursor: pointer; font-weight: 700; padding-block: 16px; }
+details.prose > summary:focus-visible { outline: 3px solid var(--focus); outline-offset: 4px; }
+
+.course-list, .material-list { row-gap: 40px; }
+.course-card:has(.new-badge), .material-card:has(.new-badge) { padding-top: 44px; }

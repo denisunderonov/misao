@@ -221,3 +221,17 @@ describe('Настоящий контент репозитория', () => {
     expect(validatedAgain).toEqual(result);
   });
 });
+
+it('исключает устаревшие подписи и сохраняет булеву метку new', () => {
+  const input = fixture();
+  const result = validateContent({ ...input,
+    topics: input.topics.map(topic => ({ ...topic, isNew: true })),
+    assignments: input.assignments.map(item => ({ ...item, isNew: false })),
+  });
+  expect(result.topics[0]).not.toHaveProperty('summary');
+  expect(result.assignments[0]).not.toHaveProperty('summary');
+  expect(result.topics[0].isNew).toBe(true);
+  expect(result.assignments[0].isNew).toBe(false);
+  expect(result.subjects[0].isNew).toBe(false);
+  expect(() => validateContent({ ...input, topics: input.topics.map(topic => ({ ...topic, isNew: 'true' })) })).toThrow();
+});

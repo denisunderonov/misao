@@ -18,13 +18,13 @@ const siteSchema = z.object({
   githubUrl: z.string().url().refine((value) => /^https:\/\/github\.com\/[a-zA-Z0-9-]+\/?$/.test(value), 'Use a GitHub profile URL'),
 });
 const subjectSchema = z.object({
-  id: identifier, title: text,
+  id: identifier, title: text, isNew: z.boolean().default(false),
   icon: z.enum(['calculator', 'code', 'globe', 'database', 'braces', 'book']),
   color: z.enum(['blue', 'mint', 'violet', 'peach']),
   sections: z.array(z.object({ id: identifier, title: text, order })),
 });
 const topicSchema = z.object({
-  subject: identifier, section: identifier, slug: identifier, title: text,
+  subject: identifier, section: identifier, slug: identifier, title: text, isNew: z.boolean().default(false),
   order, updatedAt: date, published: z.boolean().default(true), body: text,
 });
 

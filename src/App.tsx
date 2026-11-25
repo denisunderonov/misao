@@ -298,6 +298,10 @@ function SiteFooter() {
   );
 }
 
+function NewBadge() {
+  return <span className="new-badge" aria-label="Новый материал"><span aria-hidden="true">new</span></span>;
+}
+
 function HomePage() {
   return (
     <div className="container library-page">
@@ -311,6 +315,7 @@ function HomePage() {
             to={`/subjects/${encodeURIComponent(subject.id)}`}
             className={`course-card accent-${subject.color}`}
           >
+            {subject.isNew && <NewBadge />}
             <h2>{subject.title}</h2>
             <span className="course-arrow" aria-hidden="true">
               ↗
@@ -364,9 +369,8 @@ function MaterialList({
               : homeworkPath(material.subject, material.slug)
           }
         >
-          <div>
-            <h3>{material.title}</h3>
-          </div>
+          {material.isNew && <NewBadge />}
+          <h3>{material.title}</h3>
           <span className="row-arrow" aria-hidden="true">
             ↗
           </span>
@@ -415,12 +419,26 @@ function SubjectPage() {
 }
 
 function MarkdownBody({ body }: { body: string }) {
+  const marker = "\n## Ответы для самопроверки\n";
+  const position = body.indexOf(marker);
+  if (position !== -1) {
+    return (<>
+      <MarkdownBody body={body.slice(0, position)} />
+      <details className="prose"><summary>Ответы для самопроверки</summary>
+        <MarkdownBody body={body.slice(position + marker.length)} />
+      </details>
+    </>);
+  }
   return (
     <div className="prose">
       <ReactMarkdown
         remarkPlugins={[remarkGfm, remarkMath]}
         rehypePlugins={[[rehypeKatex, { trust: false, strict: "warn" }]]}
         components={{
+          p: ({ children }) => {
+            const notice = typeof children === "string" && /^Отправлять преподавателю не нужно[.!]?$/.test(children.trim());
+            return notice ? <p className="submission-notice"><strong>{children}</strong></p> : <p>{children}</p>;
+          },
           a: ({ href, children, ...props }) => (
             <a
               href={href}

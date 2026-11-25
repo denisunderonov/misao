@@ -14,10 +14,31 @@
       ]
     },
     {
-      "id": "informatics",
-      "title": "Информатика",
+      "id": "information-basics",
+      "title": "Основы работы с информацией",
+      "icon": "book",
+      "color": "mint",
+      "sections": []
+    },
+    {
+      "id": "it-mathematics",
+      "title": "Мат. аппарат в ИТ",
+      "icon": "calculator",
+      "color": "blue",
+      "sections": []
+    },
+    {
+      "id": "programming-algorithms",
+      "title": "ОП и алгоритмы",
       "icon": "code",
       "color": "mint",
+      "sections": []
+    },
+    {
+      "id": "professional-it",
+      "title": "ИТ в Профдеятельности",
+      "icon": "database",
+      "color": "blue",
       "sections": []
     }
   ]
