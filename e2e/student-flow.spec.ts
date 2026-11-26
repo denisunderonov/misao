@@ -204,7 +204,7 @@ test('все страницы помещаются в экран и доступ
   });
   page.on('console', (message) => { if (message.type() === 'error') resourceErrors.push(`console: ${message.text()}`); });
   page.on('requestfailed', (request) => {
-    if (request.url() === 'https://www.youtube-nocookie.com/embed/8u6xaEYGLa0' && request.failure()?.errorText === 'net::ERR_ABORTED') return;
+    if (new URL(request.url()).origin !== 'http://127.0.0.1:4173') return;
     resourceErrors.push(`request: ${request.url()} ${request.failure()?.errorText}`);
   });
   page.on('response', (response) => {
@@ -431,4 +431,10 @@ test('header показывает сову, центрирует desktop-нав�
   await expect(navigation).toBeHidden();
   await expect(menuButton).toHaveAttribute('aria-expanded', 'false');
   await expect(menuButton).toBeFocused();
+});
+
+ test('видео Git доступно на странице материала', async ({ page }) => {
+  await page.goto('./#/subjects/programming-algorithms/topics/git-github-basics');
+  await expect(page.locator('iframe[title="Видео о Git и GitHub"]')).toHaveAttribute('src', 'https://www.youtube-nocookie.com/embed/8u6xaEYGLa0');
+  await expect(page.getByRole('link', { name: 'Открыть видео на YouTube' })).toHaveAttribute('href', 'https://www.youtube.com/watch?v=8u6xaEYGLa0');
 });
