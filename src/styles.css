@@ -232,3 +232,18 @@ details.prose > summary:focus-visible { outline: 3px solid var(--focus); outline
 
 .course-list, .material-list { row-gap: 40px; }
 .course-card:has(.new-badge), .material-card:has(.new-badge) { padding-top: 44px; }
+
+.python-homework .prose { font-size: 18px; }
+.python-homework .prose h2 { font-size: 28px; }
+.python-homework .prose h3 { font-size: 23px; }
+
+.hint { margin: 12px 0; padding: 0 20px; border: 1px solid var(--border); border-radius: 14px; background: var(--surface); }
+.hint > summary { cursor: pointer; }
+.hint .prose { padding-bottom: 4px; }
+
+.lesson-video { margin-bottom: 36px; }
+.lesson-video iframe { display: block; width: 100%; aspect-ratio: 16 / 9; border: 0; border-radius: 16px; background: var(--surface); }
+.lesson-video p { margin: 12px 0 0; font-size: 18px; }
+.lesson-video a { text-decoration: underline; text-underline-offset: 4px; }
+
+.update-badge { background: #c2223a; color: #fff; font-size: 13px; letter-spacing: 0; }

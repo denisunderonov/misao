@@ -14,6 +14,7 @@ describe('Защита production HTML', () => {
       expect(html).toContain(directive);
     expect(html.match(/script-src[^;]+/)?.[0]).not.toContain("'unsafe-inline'");
     expect(html).toContain("style-src-attr 'unsafe-inline'");
+    expect(html).toContain("frame-src https://www.youtube-nocookie.com");
     expect(html).not.toContain("'unsafe-eval'");
   });
   it('разрешает точный SHA256 раннего скрипта темы, сохраняя сам скрипт', () => {

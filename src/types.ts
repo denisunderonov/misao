@@ -17,6 +17,7 @@ export interface Section {
 
 export interface Subject {
   isNew?: boolean;
+  isUpdated?: boolean;
   id: string;
   title: string;
   icon: string;
@@ -30,6 +31,7 @@ export interface Topic {
   slug: string;
   title: string;
   isNew?: boolean;
+  isUpdated?: boolean;
   order: number;
   updatedAt: string;
   published?: boolean;

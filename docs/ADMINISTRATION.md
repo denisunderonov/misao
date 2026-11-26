@@ -87,3 +87,7 @@ published: true
 
 - [Первый вход и установка GitHub App Pages CMS](https://pagescms.org/docs/quick-start/)
 - [Публикация Vite на GitHub Pages](https://vite.dev/guide/static-deploy.html#github-pages)
+
+## Метки карточек
+
+В Pages CMS включите «Метка new» или «Метка update» у дисциплины, темы или задания. В исходном файле используйте `isNew: true` или `isUpdated: true`. Если включены обе метки, отображается UPDATE.

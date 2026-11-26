@@ -8,6 +8,7 @@ const course = loadContent(fileURLToPath(new URL('..', import.meta.url)));
 const topic = course.topics[0];
 const assignment = course.assignments[0];
 const subject = course.subjects[0];
+const accessibleCardName = (item: { title: string; isNew?: boolean; isUpdated?: boolean }) => `${item.isUpdated ? 'Обновлённый материал ' : item.isNew ? 'Новый материал ' : ''}${item.title}`;
 const subjectRoute = (id: string) => `#/subjects/${encodeURIComponent(id)}`;
 const topicRoute = (item: { subject: string; slug: string }) => `${subjectRoute(item.subject)}/topics/${encodeURIComponent(item.slug)}`;
 const homeworkRoute = (item: { subject: string; slug: string }) => `${subjectRoute(item.subject)}/homework/${encodeURIComponent(item.slug)}`;
@@ -39,7 +40,7 @@ test('главная показывает актуальные дисципли�
   await expect(page.getByRole('heading', { name: 'Дисциплины', exact: true, level: 1 })).toBeVisible();
   await expect(page.locator('main a[href^="#/subjects/"]')).toHaveCount(course.subjects.length);
   for (const entry of course.subjects) {
-    await expect(page.locator(`main a[href="${subjectRoute(entry.id)}"]`)).toHaveAccessibleName(entry.title);
+    await expect(page.locator(`main a[href="${subjectRoute(entry.id)}"]`)).toHaveAccessibleName(accessibleCardName(entry));
   }
   await expect(page.locator('.course-card p')).toHaveCount(0);
   if (!course.subjects.length) await expect(page.getByText('Дисциплины пока не добавлены', { exact: true })).toBeVisible();
@@ -96,11 +97,11 @@ test('база знаний содержит объяснение без ска�
   await expect(page.getByRole('heading', { name: 'База знаний', exact: true })).toBeVisible();
   await expect(page.getByRole('heading', { name: 'Домашние задания', exact: true })).toBeVisible();
   const knowledgeLink = page.getByRole('region', { name: 'База знаний' }).locator(`a[href="${topicRoute(topic)}"]`);
-  await expect(knowledgeLink).toHaveAccessibleName(topic.title);
+  await expect(knowledgeLink).toHaveAccessibleName(accessibleCardName(topic));
   await expect(knowledgeLink.locator('p')).toHaveCount(0);
   await knowledgeLink.click();
   await expect(page.locator('article > h1')).toHaveText(topic.title);
-  await expect(page.locator('article .prose')).not.toBeEmpty();
+  await expect(page.locator('article .prose').first()).not.toBeEmpty();
   await expect(page.locator('a[download]')).toHaveCount(0);
 });
 
@@ -145,11 +146,11 @@ test('домашнее задание открывается отдельно и
   test.skip(!assignment, 'В репозитории нет опубликованных домашних заданий. Их интерфейс покрыт независимыми App fixtures.');
   await page.goto(`./${subjectRoute(assignment.subject)}`);
   const homeworkLink = page.getByRole('region', { name: 'Домашние задания' }).locator(`a[href="${homeworkRoute(assignment)}"]`);
-  await expect(homeworkLink).toHaveAccessibleName(assignment.title);
+  await expect(homeworkLink).toHaveAccessibleName(accessibleCardName(assignment));
   await expect(homeworkLink.locator('p')).toHaveCount(0);
   await homeworkLink.click();
   await expect(page.locator('article > h1')).toHaveText(assignment.title);
-  await expect(page.locator('article .prose')).not.toBeEmpty();
+  await expect(page.locator('article .prose').first()).not.toBeEmpty();
   await expect(page.locator('a[download], a[href$=".pdf" i]')).toHaveCount(0);
   await expect(page.getByRole('button', { name: /скачать|pdf/i })).toHaveCount(0);
 });
@@ -202,7 +203,10 @@ test('все страницы помещаются в экран и доступ
     if (/\.pdf$/i.test(new URL(request.url()).pathname)) pdfRequests.push(request.url());
   });
   page.on('console', (message) => { if (message.type() === 'error') resourceErrors.push(`console: ${message.text()}`); });
-  page.on('requestfailed', (request) => resourceErrors.push(`request: ${request.url()} ${request.failure()?.errorText}`));
+  page.on('requestfailed', (request) => {
+    if (request.url() === 'https://www.youtube-nocookie.com/embed/8u6xaEYGLa0' && request.failure()?.errorText === 'net::ERR_ABORTED') return;
+    resourceErrors.push(`request: ${request.url()} ${request.failure()?.errorText}`);
+  });
   page.on('response', (response) => {
     if (new URL(response.url()).origin === 'http://127.0.0.1:4173' && response.status() >= 400)
       resourceErrors.push(`HTTP ${response.status()}: ${response.url()}`);

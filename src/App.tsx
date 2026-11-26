@@ -302,6 +302,10 @@ function NewBadge() {
   return <span className="new-badge" aria-label="Новый материал"><span aria-hidden="true">new</span></span>;
 }
 
+function UpdateBadge() {
+  return <span className="new-badge update-badge" aria-label="Обновлённый материал"><span aria-hidden="true">update</span></span>;
+}
+
 function HomePage() {
   return (
     <div className="container library-page">
@@ -315,7 +319,7 @@ function HomePage() {
             to={`/subjects/${encodeURIComponent(subject.id)}`}
             className={`course-card accent-${subject.color}`}
           >
-            {subject.isNew && <NewBadge />}
+            {subject.isUpdated ? <UpdateBadge /> : subject.isNew && <NewBadge />}
             <h2>{subject.title}</h2>
             <span className="course-arrow" aria-hidden="true">
               ↗
@@ -369,7 +373,7 @@ function MaterialList({
               : homeworkPath(material.subject, material.slug)
           }
         >
-          {material.isNew && <NewBadge />}
+          {material.isUpdated ? <UpdateBadge /> : material.isNew && <NewBadge />}
           <h3>{material.title}</h3>
           <span className="row-arrow" aria-hidden="true">
             ↗
@@ -419,6 +423,20 @@ function SubjectPage() {
 }
 
 function MarkdownBody({ body }: { body: string }) {
+  const hint = /^### (Подсказка [0-9]+)\s*$/m.exec(body);
+  if (hint && hint.index !== undefined) {
+    const start = hint.index + hint[0].length;
+    const tail = body.slice(start);
+    const next = /^#{1,3} /m.exec(tail);
+    const end = next?.index ?? tail.length;
+    return <>
+      {hint.index > 0 && <MarkdownBody body={body.slice(0, hint.index)} />}
+      <details className="prose hint"><summary>{hint[1]}</summary>
+        <MarkdownBody body={tail.slice(0, end).trim()} />
+      </details>
+      {next && <MarkdownBody body={tail.slice(end)} />}
+    </>;
+  }
   const marker = "\n## Ответы для самопроверки\n";
   const position = body.indexOf(marker);
   if (position !== -1) {
@@ -484,6 +502,12 @@ function TopicPage() {
       </Link>
       <article className="topic-article">
         <h1 className="page-title topic-title">{topic.title}</h1>
+        {topic.subject === "programming-algorithms" && topic.slug === "git-github-basics" && (
+          <div className="lesson-video">
+            <iframe src="https://www.youtube-nocookie.com/embed/8u6xaEYGLa0" title="Видео о Git и GitHub" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowFullScreen referrerPolicy="strict-origin-when-cross-origin" />
+            <p><a href="https://www.youtube.com/watch?v=8u6xaEYGLa0" target="_blank" rel="noreferrer">Открыть видео на YouTube</a></p>
+          </div>
+        )}
         <MarkdownBody body={topic.body} />
       </article>
     </div>
@@ -506,7 +530,7 @@ function HomeworkPage() {
       >
         ← {subject.title}
       </Link>
-      <article className="topic-article">
+      <article className={`topic-article ${["python-homework-1-factorial", "python-homework-1-median"].includes(assignment.slug) ? "python-homework" : ""}`}>
         <h1 className="page-title topic-title">{assignment.title}</h1>
         <MarkdownBody body={assignment.body} />
       </article>

@@ -13,6 +13,7 @@ export function secureHtml(html: string): string {
     "img-src 'self' https: data:",
     "font-src 'self'",
     "connect-src 'none'",
+    "frame-src https://www.youtube-nocookie.com",
     "object-src 'none'",
     "base-uri 'none'",
     "form-action 'none'",

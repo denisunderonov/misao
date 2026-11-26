@@ -32,7 +32,14 @@
       "title": "ОП и алгоритмы",
       "icon": "code",
       "color": "mint",
-      "sections": []
+      "sections": [
+        {
+          "id": "python-basics",
+          "title": "Основы Python",
+          "order": 1
+        }
+      ],
+      "isUpdated": true
     },
     {
       "id": "professional-it",
