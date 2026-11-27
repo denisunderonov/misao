@@ -18,7 +18,13 @@
       "title": "Основы работы с информацией",
       "icon": "book",
       "color": "mint",
-      "sections": []
+      "sections": [
+        {
+          "id": "spreadsheets",
+          "title": "Электронные таблицы",
+          "order": 1
+        }
+      ]
     },
     {
       "id": "it-mathematics",
