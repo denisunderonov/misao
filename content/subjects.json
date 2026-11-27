@@ -24,14 +24,22 @@
           "title": "Электронные таблицы",
           "order": 1
         }
-      ]
+      ],
+      "isUpdated": true
     },
     {
       "id": "it-mathematics",
       "title": "Мат. аппарат в ИТ",
       "icon": "calculator",
       "color": "blue",
-      "sections": []
+      "sections": [
+        {
+          "id": "probability",
+          "title": "Теория вероятностей",
+          "order": 1
+        }
+      ],
+      "isUpdated": true
     },
     {
       "id": "programming-algorithms",
@@ -52,7 +60,14 @@
       "title": "ИТ в Профдеятельности",
       "icon": "database",
       "color": "blue",
-      "sections": []
+      "sections": [
+        {
+          "id": "databases",
+          "title": "Базы данных",
+          "order": 1
+        }
+      ],
+      "isUpdated": true
     }
   ]
 }
